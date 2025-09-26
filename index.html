@@ -18,14 +18,33 @@
       <p class="mb-0 text-lg font-medium">
         Hongera Mzalendo! Kenya yakushukuru!
       </p>
-      <div>
+      <div class="space-y-2">
+        <div class="mb-2">
+          <label class="block text-gray-700 text-sm font-bold mb-1">Ugumu:</label>
+          <select id="difficultySelect" class="w-full py-2 px-3 rounded bg-gray-100 text-gray-800">
+            <option value="easy">Rahisi</option>
+            <option value="normal" selected>Kawaida</option>
+            <option value="hard">Ngumu</option>
+          </select>
+        </div>
         <button
-          class="bg-blue-500 text-white w-full py-3 rounded-full text-sm"
+          class="bg-blue-500 text-white w-full py-3 rounded-full text-sm mb-2"
           id="startGameButton"
         >
           Start Game
         </button>
+        <button
+          class="bg-red-500 text-white w-full py-3 rounded-full text-sm"
+          id="quitGameButton"
+        >
+          Quit Game
+        </button>
       </div>
+    </div>
+  </div>
+
+  <!-- Fade-out message for quitting -->
+  <!-- Removed thanks message. 'Hongera Mzalendo!' and 'Shujaa Score' remain. -->
     </div>
   </div>
 
