@@ -112,12 +112,23 @@ class Madeni extends Enemy {
 }
 
 class Riba extends Enemy {
-    constructor(x, y, color, speed) {
-        super(x, y, 20, color, speed); // Smaller radius
+    constructor(x, y, color, angleOffset = 0) {
+        super(x, y, 20, color, {x: 0, y: 0});
         this.type = 'riba';
         this.vice = 'Riba';
+        this.angle = angleOffset;
+        this.orbitRadius = 120 + Math.random() * 40;
+        this.orbitSpeed = 0.02 + Math.random() * 0.01;
     }
-     draw() {
+    update(player) {
+        this.angle += this.orbitSpeed;
+        this.x = player.x + Math.cos(this.angle) * this.orbitRadius;
+        this.y = player.y + Math.sin(this.angle) * this.orbitRadius;
+        this.x = Math.max(this.radius, Math.min(canvas.width - this.radius, this.x));
+        this.y = Math.max(this.radius, Math.min(canvas.height - this.radius, this.y));
+        this.draw();
+    }
+    draw() {
         c.beginPath();
         c.font = "bold 18px sans-serif";
         c.fillStyle = 'white';
@@ -261,7 +272,11 @@ function animate() {
     });
 
     enemies.forEach((enemy, enemyIndex) => {
-        enemy.update();
+        if (enemy.type === 'riba') {
+            enemy.update(player);
+        } else {
+            enemy.update();
+        }
 
         // Check collision with player
         const distToPlayer = Math.hypot(player.x - enemy.x, player.y - enemy.y);
@@ -294,7 +309,7 @@ function animate() {
                 'Kiburi': 'Kiburi kimekufanya usisikilize ushauri! 😎',
                 'Ukiritimba': 'Ukiritimba umezuia maendeleo yako! 🚧',
                 'Dhulma': 'Dhulma imefanya wachezaji wakukimbie! 😢',
-                'Kutesa Wanyama': 'Kutesa wanyama kimekufanya simba akukasirike! 🦁',
+                'Kutesa Wanyama': 'Kutesa wanyama imemfanya simba akukasirike! 🦁',
                 'Usherati': 'Usherati umefanya nguvu zako zipungue! 😳',
                 'Hujuma': 'Hujuma imevuruga mipango yako! 🕵️‍♂️',
                 'Ulafi': 'Ulafi umefanya chakula kiishe! 🍔',
@@ -303,7 +318,7 @@ function animate() {
                 'Riba': 'Riba imekula faida zako zote! 📉',
             };
             causeText = bubblePhrases[cause] || `${cause} imekushinda leo!`; 
-            causeText += ' Bahati njema wakati ujao!';
+            causeText += ' Jaribu Tena!';
             // Show cause in modal
             let modalDiv = modalEl.querySelector('div');
             if (modalDiv) {
@@ -342,15 +357,13 @@ function animate() {
                     scoreEl.innerHTML = score;
                     enemy.hits--;
                     if (enemy.hits > 0) {
-                        //gsap.to(enemy, { radius: enemy.radius - 8 }); // You need to import GSAP for this
-                        enemy.radius -= 8; // Simple alternative
+                        enemy.radius -= 8;
                         projectiles.splice(projectileIndex, 1);
                     } else {
-                         // Split into 2 riba bubbles
-                        for (let j = 0; j < 2; j++) {
-                            const angle = Math.random() * Math.PI * 2;
-                            const speed = { x: Math.cos(angle) * 2, y: Math.sin(angle) * 2 };
-                            enemies.push(new Riba(enemy.x, enemy.y, enemy.color, speed));
+                        // Split into 3 riba bubbles circling player
+                        for (let j = 0; j < 3; j++) {
+                            const angleOffset = (Math.PI * 2 / 3) * j;
+                            enemies.push(new Riba(enemy.x, enemy.y, enemy.color, angleOffset));
                         }
                         score += 200;
                         enemies.splice(enemyIndex, 1);
@@ -437,8 +450,13 @@ if (quitGameButton) {
     quitGameButton.addEventListener('click', () => {
         cancelAnimationFrame(animationID);
         clearInterval(spawnInterval);
-        modalEl.style.display = 'flex';
+        // Always default score to zero if not played
+        if (typeof score === 'undefined' || isNaN(score)) {
+            score = 0;
+        }
+        scoreEl.innerHTML = score;
         bigScoreEl.innerHTML = score;
+        modalEl.style.display = 'flex';
         // Show quit message in modal
         let modalDiv = modalEl.querySelector('div');
         if (modalDiv) {
@@ -449,7 +467,7 @@ if (quitGameButton) {
                 causeEl.className = 'text-red-600 text-lg font-bold mt-2';
                 modalDiv.appendChild(causeEl);
             }
-            causeEl.textContent = 'Umeacha mchezo. Bahati njema wakati ujao!';
+            causeEl.textContent = 'Umeacha mchezo. Nakuaga kwaheri, nakutakia la kheri!';
         }
     });
 }
