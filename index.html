@@ -1,7 +1,5 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-</head>
-<body>
   <style>
     html, body {
       margin: 0;
@@ -24,6 +22,9 @@
       z-index: 0;
     }
   </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
 
   <div class="fixed text-white text-sm ml-2 mt-1 select-none">
     <p class="text-sky-500 dark:text-sky-400">Jeshi la Mzalendo</p>
@@ -64,7 +65,16 @@
         </button>
       </div>
     </div>
-  </div> <div class="fixed bottom-4 right-4 z-30 flex items-center space-x-2" id="inGameSoundToggleContainer" style="display:none;">
+  </div>
+
+  <!-- Fade-out message for quitting -->
+  <!-- Removed thanks message. 'Hongera Mzalendo!' and 'Shujaa Score' remain. -->
+    </div>
+  </div>
+
+
+
+  <div class="fixed bottom-4 right-4 z-30 flex items-center space-x-2" id="inGameSoundToggleContainer" style="display:none;">
     <button id="inGameSoundToggle" class="bg-gray-800 text-white px-3 py-2 rounded-full text-sm font-semibold shadow transition hover:bg-gray-700">Sauti: Washa</button>
   </div>
   <canvas></canvas>
