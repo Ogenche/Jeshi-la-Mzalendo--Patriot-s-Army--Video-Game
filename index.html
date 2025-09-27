@@ -26,7 +26,7 @@
 </head>
 <body>
 
-  <div class="fixed text-white text-sm ml-2 mt-1 select-none">
+  <div class="fixed text-white text-sm ml-2 mt-1 select-none" style="z-index:50;">
     <p class="text-sky-500 dark:text-sky-400">Jeshi la Mzalendo</p>
     <span>Shujaa Points: </span><span id="scoreEl">0</span>
   </div>
@@ -76,6 +76,7 @@
 
   <div class="fixed bottom-4 right-4 z-30 flex items-center space-x-2" id="inGameSoundToggleContainer" style="display:none;">
     <button id="inGameSoundToggle" class="bg-gray-800 text-white px-3 py-2 rounded-full text-sm font-semibold shadow transition hover:bg-gray-700">Sauti: Washa</button>
+    <button id="inGameQuitButton" class="bg-red-600 text-white px-3 py-2 rounded-full text-sm font-semibold shadow transition hover:bg-red-700">Toka</button>
   </div>
   <canvas></canvas>
 

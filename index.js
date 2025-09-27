@@ -551,13 +551,17 @@ startGameButton.addEventListener('click', () => {
     stopSound('anthem');
     stopSound('end_chime');
     stopSound('war_bg');
-    
+
     init();
     animate();
     spawnEnemy();
     modalEl.style.display = 'none';
 
-// Play war_bg at half volume if sound was on
+    // Always show top-left score UI during gameplay
+    const scoreHud = document.querySelector('.fixed.text-white.text-sm.ml-2.mt-1.select-none');
+    if (scoreHud) scoreHud.style.display = 'block';
+
+    // Play war_bg at half volume if sound was on
     if (soundOn) {
         sounds.war_bg.volume = 0.25; // Half volume
         playSound('war_bg');
@@ -588,6 +592,9 @@ if (quitGameButton) {
         scoreEl.innerHTML = score;
         bigScoreEl.innerHTML = score;
         modalEl.style.display = 'flex';
+        // Hide top-left score UI only when modal is shown (end or quit)
+        const scoreHud = document.querySelector('.fixed.text-white.text-sm.ml-2.mt-1.select-none');
+        if (scoreHud) scoreHud.style.display = 'block';
         // Show quit message in modal
         let modalDiv = modalEl.querySelector('div');
         if (modalDiv) {
@@ -608,6 +615,42 @@ if (soundToggle) {
 }
 if (inGameSoundToggle) {
     inGameSoundToggle.addEventListener('click', () => setSound(!soundOn));
+}
+const inGameQuitButton = document.getElementById('inGameQuitButton');
+if (inGameQuitButton) {
+    inGameQuitButton.addEventListener('click', () => {
+        // End game and show modal as quit
+        lastScreen = 'end';
+        // Stop all sounds
+        Object.keys(sounds).forEach(key => {
+            sounds[key].pause();
+            sounds[key].currentTime = 0;
+        });
+        playSound('end_chime');
+        if (inGameSoundToggleContainer) inGameSoundToggleContainer.style.display = 'none';
+        // Always default score to zero if not played
+        if (typeof score === 'undefined' || isNaN(score)) {
+            score = 0;
+        }
+        scoreEl.innerHTML = score;
+        bigScoreEl.innerHTML = score;
+        modalEl.style.display = 'flex';
+        // Hide top-left score UI when quitting (end screen)
+        const scoreHud = document.querySelector('.fixed.text-white.text-sm.ml-2.mt-1.select-none');
+        if (scoreHud) scoreHud.style.display = 'block';
+        // Show quit message in modal
+        let modalDiv = modalEl.querySelector('div');
+        if (modalDiv) {
+            let causeEl = modalDiv.querySelector('#causeEl');
+            if (!causeEl) {
+                causeEl = document.createElement('p');
+                causeEl.id = 'causeEl';
+                causeEl.className = 'text-red-600 text-lg font-bold mt-2';
+                modalDiv.appendChild(causeEl);
+            }
+            causeEl.textContent = 'Umeacha mchezo. Nakuaga kwaheri, nakutakia la kheri!';
+        }
+    });
 }
 updateSoundToggleUI();
 
