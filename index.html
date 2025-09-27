@@ -1,3 +1,6 @@
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+</head>
 <body>
   <style>
     html, body {
@@ -27,14 +30,18 @@
     <span>Shujaa Points: </span><span id="scoreEl">0</span>
   </div>
 
-  <div class="fixed inset-0 flex items-center justify-center z-10" id="modalEl">
-    <div class="bg-white max-w-md w-full p-6 text-center">
+  <div class="fixed inset-0 flex items-center justify-center z-20" id="modalEl" style="pointer-events: auto;">
+    <div class="bg-white max-w-md w-full p-6 text-center" style="pointer-events: auto;">
       <h1 class="text-4xl font-bold leading-none" id="bigScoreEl">0</h1>
       <p class="text-sm text-gray-700 mb-0">Shujaa Score</p>
       <p class="mb-0 text-lg font-medium">
         Hongera Mzalendo! Kenya yakushukuru!
       </p>
       <div class="space-y-2">
+        <div class="mb-2 flex items-center justify-center">
+          <label for="soundToggle" class="text-gray-700 text-sm font-bold mr-2">Sauti:</label>
+          <button id="soundToggle" class="bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm font-semibold transition hover:bg-gray-300">Washa</button>
+        </div>
         <div class="mb-2">
           <label class="block text-gray-700 text-sm font-bold mb-1">Ugumu:</label>
           <select id="difficultySelect" class="w-full py-2 px-3 rounded bg-gray-100 text-gray-800">
@@ -57,15 +64,9 @@
         </button>
       </div>
     </div>
+  </div> <div class="fixed bottom-4 right-4 z-30 flex items-center space-x-2" id="inGameSoundToggleContainer" style="display:none;">
+    <button id="inGameSoundToggle" class="bg-gray-800 text-white px-3 py-2 rounded-full text-sm font-semibold shadow transition hover:bg-gray-700">Sauti: Washa</button>
   </div>
-
-  <!-- Fade-out message for quitting -->
-  <!-- Removed thanks message. 'Hongera Mzalendo!' and 'Shujaa Score' remain. -->
-    </div>
-  </div>
-
-
-
   <canvas></canvas>
 
   <script

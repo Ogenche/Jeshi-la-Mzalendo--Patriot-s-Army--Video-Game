@@ -13,12 +13,101 @@ const quitGameButton = document.getElementById('quitGameButton');
 const difficultySelect = document.getElementById('difficultySelect');
 const thanksMessage = document.getElementById('thanksMessage');
 
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+const soundToggle = document.getElementById('soundToggle');
+const inGameSoundToggle = document.getElementById('inGameSoundToggle');
+const inGameSoundToggleContainer = document.getElementById('inGameSoundToggleContainer');
+let soundOn = false; // start with sound off
+let lastScreen = 'menu'; // Track last screen: 'menu', 'game', 'end'
+
+function updateSoundToggleUI() {
+    if (soundToggle) {
+        soundToggle.textContent = soundOn ? 'Zima' : 'Washa';
+        soundToggle.classList.toggle('bg-gray-200', soundOn);
+        soundToggle.classList.toggle('bg-red-200', !soundOn);
+    }
+    if (inGameSoundToggle) {
+        inGameSoundToggle.textContent = 'Sauti: ' + (soundOn ? 'Zima' : 'Washa');
+        inGameSoundToggle.classList.toggle('bg-gray-800', soundOn);
+        inGameSoundToggle.classList.toggle('bg-red-600', !soundOn);
+    }
+}
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    if (typeof player !== 'undefined'  && player !== null) {
+        player.x = canvas.width / 2;
+        player.y = canvas.height / 2;
+    }
+}
+
+function setSound(on) {
+    soundOn = on;
+    updateSoundToggleUI();
+
+        // Stop all sounds first
+    Object.keys(sounds).forEach(key => {
+        sounds[key].pause();
+        sounds[key].currentTime = 0;
+    });
+
+
+    if (lastScreen === 'menu') {
+        if (soundOn) {
+            playSound('anthem');
+        }
+    } else if (lastScreen === 'game') {
+        if (soundOn) {
+            sounds.war_bg.volume = 0.25; // Half volume for game
+            playSound('war_bg');
+        }
+    } else if (lastScreen === 'end') {
+        // Never play anthem on end screen - only chime
+        if (soundOn) {
+            playSound('end_chime');
+            sounds.end_chime.loop = true;
+        }
+    }
+}
 
 // Game Assets
 const lindaNchiImg = new Image();
 lindaNchiImg.src = "Assets/linda-nchi.png"; // Load the image once
+
+
+
+// Sound Assets (Files in Assets/)
+const sounds = {
+    anthem: new Audio('Assets/anthem.mp3'), // menu background
+    war_bg: new Audio('Assets/war_bg.wav'), // gameplay background
+    explode: new Audio('Assets/explode.wav'), // explosion
+    end_chime: new Audio('Assets/end_chime.mp3'), // game over chime
+};
+Object.values(sounds).forEach(sound => {
+    sound.preload = 'auto';
+    sound.volume = 0.5;
+    sound.load();
+});
+sounds.anthem.loop = true;
+sounds.war_bg.loop = true;
+
+function playSound(name) {
+    if (sounds[name] && soundOn) {
+        sounds[name].currentTime = 0;
+        const playPromise = sounds[name].play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                console.error(`Error playing sound ${name}:`, error);
+            });
+        }
+    }
+}
+function stopSound(name) {
+    if (sounds[name]) {
+        sounds[name].pause();
+        sounds[name].currentTime = 0;
+    }
+}
 
 // List of vices for enemies
 const viceList = ["Ufisadi", "Ubinafsi", "Ukabila", "Ulanguzi", "Magendo", "Uzembe", "Ujinga", "Propaganda", "Siasa chafu", "Mabadiliko ya tabianchi", "Gesi joto", "Ubaguzi", "Kisukuku", "Polio", "Vita", "Kiburi", "Ukiritimba", "Ubaguzi wa rangi", "Dhulma", "Kutesa Wanyama", "Usherati", "Hujuma", "Ulafi", "Uhaini"];
@@ -182,13 +271,18 @@ let animationID;
 let spawnInterval; // To control the enemy spawning
 let difficulty = 'normal';
 
-// Center of the screen
-const x = canvas.width / 2;
-const y = canvas.height / 2;
+// Center of the screen dynamic function
+function getCenter() {
+    return {
+        x: canvas.width / 2,
+        y: canvas.height / 2
+    };
+}
 
 
 function init() {
-    player = new Player(x, y, 10, 'white');
+    const center = getCenter(); // Use dynamic center
+    player = new Player(center.x, center.y, 10, 'white');
     projectiles = [];
     enemies = [];
     particles = [];
@@ -209,6 +303,7 @@ function spawnEnemy() {
     spawnInterval = setInterval(() => {
         const radius = Math.random() * (30 - 10) + 10;
         let spawnX, spawnY;
+        const center = getCenter(); // Use dynamic center
 
         if (Math.random() < 0.5) {
             spawnX = Math.random() < 0.5 ? 0 - radius : canvas.width + radius;
@@ -219,7 +314,7 @@ function spawnEnemy() {
         }
 
         const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
-        const angle = Math.atan2(y - spawnY, x - spawnX);
+        const angle = Math.atan2(center.y - spawnY, center.x - spawnX);
         const speedMultiplier = getDifficultyMultiplier();
         const speed = {
             x: Math.cos(angle) * speedMultiplier,
@@ -272,12 +367,12 @@ function animate() {
     });
 
     enemies.forEach((enemy, enemyIndex) => {
+        // update enemy position
         if (enemy.type === 'riba') {
             enemy.update(player);
         } else {
             enemy.update();
         }
-
         // Check collision with player
         const distToPlayer = Math.hypot(player.x - enemy.x, player.y - enemy.y);
         if (distToPlayer - enemy.radius - player.radius < 1) {
@@ -285,11 +380,24 @@ function animate() {
             clearInterval(spawnInterval); // Stop spawning new enemies
             modalEl.style.display = 'flex';
             bigScoreEl.innerHTML = score;
+            stopSound('war_bg');
+            lastScreen = 'end'; // Set screen state first
+            if (soundOn) {
+            playSound('explode');
+            setTimeout(() => {
+                if (soundOn) {
+                playSound('end_chime');
+                sounds.end_chime.loop = true;
+            }
+        }, 500);
+    }   
+            
+            
+           
             // Show only the last bubble that caused game over
             const cause = enemy.vice;
             let causeText = '';
-            // Unique Swahili sentences for each cause
-            // Unique, funny Swahili phrases for each bubble
+            // Swahili sentences for each cause
             const bubblePhrases = {
                 'Ufisadi': 'Ufisadi umechukua mshahara wako na roho yako! 😂',
                 'Polio': 'Polio imekufanya usitembee tena kwenye uwanja wa vita! 🦽',
@@ -317,7 +425,7 @@ function animate() {
                 'Madeni': 'Madeni yamekufanya ushindwe kununua silaha! 💰',
                 'Riba': 'Riba imekula faida zako zote! 📉',
             };
-            causeText = bubblePhrases[cause] || `${cause} imekushinda leo!`; 
+            causeText = bubblePhrases[cause] || `${cause} pole!`; 
             causeText += ' Jaribu Tena!';
             // Show cause in modal
             let modalDiv = modalEl.querySelector('div');
@@ -339,11 +447,6 @@ function animate() {
 
             // If projectile hits enemy
             if (dist - enemy.radius - projectile.radius < 1) {
-
-                // =================================================================
-                //  FIX #2: All this logic was outside the `if` block. It is now inside.
-                // =================================================================
-                
                 // Create explosion particles
                 for (let i = 0; i < enemy.radius * 2; i++) {
                     particles.push(new Particle(projectile.x, projectile.y, Math.random() * 2, enemy.color, {
@@ -389,15 +492,16 @@ function animate() {
                 }
             }
         });
-    });
+    });  
 }
-
+// check
 // =================================================================
 //  Event Listeners
 // =================================================================
 
 // Improved shooting accuracy for mouse/touch
 function getPointerPosition(event) {
+    event.preventDefault();
     let clientX, clientY;
     if (event.touches && event.touches.length) {
         clientX = event.touches[0].clientX;
@@ -408,9 +512,12 @@ function getPointerPosition(event) {
     }
     // Adjust for canvas position
     const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
     return {
-        x: clientX - rect.left,
-        y: clientY - rect.top
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
     };
 }
 
@@ -438,18 +545,42 @@ if (difficultySelect) {
 }
 
 startGameButton.addEventListener('click', () => {
+    lastScreen = 'game';
     difficulty = difficultySelect ? difficultySelect.value : 'normal';
+    // stop all sounds first
+    stopSound('anthem');
+    stopSound('end_chime');
+    stopSound('war_bg');
+    
     init();
     animate();
     spawnEnemy();
     modalEl.style.display = 'none';
+
+// Play war_bg at half volume if sound was on
+    if (soundOn) {
+        sounds.war_bg.volume = 0.25; // Half volume
+        playSound('war_bg');
+    }
+
+    if (inGameSoundToggleContainer) inGameSoundToggleContainer.style.display = 'flex';
 });
 
 // Quit button logic with Swahili quit message
 if (quitGameButton) {
     quitGameButton.addEventListener('click', () => {
+        lastScreen = 'menu';
         cancelAnimationFrame(animationID);
         clearInterval(spawnInterval);
+        //Stop all sounds first
+        stopSound('war_bg');
+        stopSound('end_chime');
+        stopSound('anthem');
+        // Then Play anthem if sound is on
+        if (soundOn) {
+            playSound('end_chime');
+        }
+    if (inGameSoundToggleContainer) inGameSoundToggleContainer.style.display = 'none';
         // Always default score to zero if not played
         if (typeof score === 'undefined' || isNaN(score)) {
             score = 0;
@@ -471,3 +602,15 @@ if (quitGameButton) {
         }
     });
 }
+
+if (soundToggle) {
+    soundToggle.addEventListener('click', () => setSound(!soundOn));
+}
+if (inGameSoundToggle) {
+    inGameSoundToggle.addEventListener('click', () => setSound(!soundOn));
+}
+updateSoundToggleUI();
+
+resizeCanvas();
+//resize listener
+window.addEventListener('resize', resizeCanvas);
