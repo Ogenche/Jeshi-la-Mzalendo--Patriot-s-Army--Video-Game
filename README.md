@@ -1,29 +1,70 @@
-# Jeshi la Mzalendo (Patriot's Army) Video Game
+# Jeshi la Mzalendo (Patriot's Army)
 
-This is a fully-functional video game that I made to promote peace and other Kenyan national values and peace in the runup to the 2022 general elections.
+This is an enhanced version of the original [Jeshi la Mzalendo video game](https://github.com/WafulaLukorito/Jeshi-la-Mzalendo--Patriot-s-Army--Video-Game) created by [WafulaLukorito](https://github.com/WafulaLukorito).
 
-The game can be enjoyed at <https://jeshi.lukorito.dev/>.
+## Play the Game!
 
-Jeshi la Mzalendo is a single-player game that is played in a 2D environment.
+You can play this version of the game directly in your browser by visiting:
+**[https://jeshi-la-mzalendo-lukorito.netlify.app](https://jeshi-la-mzalendo-lukorito.netlify.app)**
 
-### The Game has been created using the following technologies
+## New Features in this Version
 
-- HTML5 and Canvas API (for the game's UI)
-- JavaScript (for the game's logic)
-- Tailwind CSS
-- Concepts for Maths (Trigonometry) and Physics are applied to regulate movements of objects.
--"gsap" library is employed for smoother transitions.
-- Advanced concepts in Computer Graphics.
+- **Dynamic Difficulty Levels**: Tailors the challenge to skill level. Select difficulty before the battle begins:
 
-## Video Game Screenshots
+  - **Rahisi (Easy)**: For new recruits. Enemies are slower and more forgiving.
+  - **Kawaida (Medium)**: For a seasoned soldier. Balanced challenge.
+  - **Ngumu (Hard)**: For the ultimate patriot. Enemies are fast and relentless.
 
-![End Game UI](https://github.com/WafulaLukorito/Jeshi-la-Mzalendo--Patriot-s-Army--Game/blob/master/screenshots/jeshi-screesnshot1.png "End game UI")
-End game UI
+- **Thematic Death Messages**: Your fight has meaning, and so does your defeat. When you fall in battle, the game provides a context-aware message of what caused your defeat (Ties gameplay to the story).
 
-![Game mode UI](https://github.com/WafulaLukorito/Jeshi-la-Mzalendo--Patriot-s-Army--Game/blob/master/screenshots/jeshi-screesnshot2.png "Game mode UI")
-Game mode UI
+- **Full Swahili Language Support:** The entire game including all menus and in-game text has been translated into Swahili.
 
-![Game mode UI](https://github.com/WafulaLukorito/Jeshi-la-Mzalendo--Patriot-s-Army--Game/blob/master/screenshots/jeshi-screesnshot3.png "Game mode UI")
-Game mode UI
+- **New Enemy Type:** A new, more challenging enemy ("Madeni" splits to "Riba") has been added to increase the game's difficulty and variety.
+- **Sound Effects:** Added sound effects for a more immersive and engaging gameplay experience.
+- **Improved User Interface (UI):**
+  - An **exit button** (Toka) has been added for easier game closure.
+  - The **live score counter** has been improved for better visibility.
+- **Responsive Screen Adaptation:** The game now adapts better to different screen sizes ensuring a consistent experience across various resolutions.
 
-For comments and suggestions on how to improve the game, kindly email me at <hello@lukorito.dev>.
+## How to Play
+
+The objective is to defend the country by shooting down negative values.
+
+- **Aim:** Use your mouse to aim the turret
+- **Fire:** Click the left mouse button to shoot/ Touch to shoot if on phone.
+- **Survive:** Don't let the enemies overwhelm you! The game ends when an enemy enters the capital.
+
+## Tech Stack & Deployment
+
+| Category            | Technology / Concept                          |
+| ------------------- | --------------------------------------------- |
+| **Core Logic**      | `HTML5 Canvas API`, `JavaScript`              |
+| **Styling**         | `Tailwind CSS`                                |
+| **Animation**       | `GSAP (GreenSock Animation Platform)`         |
+| **Key Concepts**    | `Trigonometry & Physics`, `Computer Graphics` |
+| **Deployment**      | `Netlify`                                     |
+| **Version Control** | `Git / GitHub`                                |
+
+## Screenshots
+
+Here are some screenshots of the new version in action.
+
+### **Desktop Version**
+
+| Main Menu                                                 | In-Game Action                                        |
+| --------------------------------------------------------- | ----------------------------------------------------- |
+| ![Desktop Start Menu](screenshots/desktop-start-menu.png) | ![Desktop Gameplay](screenshots/desktop-gameplay.png) |
+
+### **Mobile Version**
+
+| Mobile Gameplay                                     | Game Over Screen                                    |
+| --------------------------------------------------- | --------------------------------------------------- |
+| ![Mobile Gameplay](screenshots/mobile-gameplay.jpg) | ![Mobile End Menu](screenshots/mobile-end-menu.jpg) |
+
+---
+
+##
+
+## Original Project
+
+A big thank you to [WafulaLukorito](https://github.com/WafulaLukorito) for creating the original version of this game. You can find the original repository [here](https://github.com/WafulaLukorito/Jeshi-la-Mzalendo--Patriot-s-Army--Video-Game).
